@@ -30,6 +30,16 @@ jobs:
           sed -i 's/CONFIG_FB_MXC_EINK_PANEL=y/CONFIG_FB_MXC_EINK_PANEL=n/' .config
           yes "" | make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- oldconfig
 
+      - name: Patch compiler header
+        run: |
+          cd kernel
+          cat > include/linux/compiler-gcc7.h << 'EOF'
+          #ifndef __LINUX_COMPILER_H
+          #error "Please don't include <linux/compiler-gcc7.h> directly, include <linux/compiler.h> instead."
+          #endif
+          #include <linux/compiler-gcc.h>
+          EOF
+
       - name: Build vmlinux and modules
         run: |
           cd kernel

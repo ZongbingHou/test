@@ -21,6 +21,8 @@ jobs:
           cd kernel
           wget -q https://kindledownloads.s3.amazonaws.com/Kindle_src_5.16.2.1.1_4097550002.tar.gz
           tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz
+          echo "=== wario configs ==="
+          ls arch/arm/configs/ | grep -i wario || echo "none found"
 
       - name: Configure kernel
         run: |

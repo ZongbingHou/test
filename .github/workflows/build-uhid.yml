@@ -14,7 +14,7 @@ jobs:
 
       - name: Download Linaro 4.9.4 toolchain
         run: |
-          wget -q https://releases.linaro.org/components/toolchain/binaries/4.9-2017.01/arm-linux-gnueabihf/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf.tar.xz
+          wget -q https://snapshots.linaro.org/components/toolchain/binaries/4.9-2017.01/arm-linux-gnueabihf/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf.tar.xz
           tar -xf gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf.tar.xz
           echo "$PWD/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf/bin" >> $GITHUB_PATH
 

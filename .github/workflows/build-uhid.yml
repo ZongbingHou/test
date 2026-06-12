@@ -33,7 +33,7 @@ jobs:
       - name: Patch compiler header
         run: |
           cd kernel
-          cp include/linux/compiler-gcc6.h include/linux/compiler-gcc7.h
+          cp include/linux/compiler-gcc4.h include/linux/compiler-gcc7.h
 
       - name: Build vmlinux and modules
         run: |

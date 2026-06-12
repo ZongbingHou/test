@@ -17,11 +17,11 @@ jobs:
           wget -q https://kindledownloads.s3.amazonaws.com/Kindle_src_5.16.2.1.1_4097550002.tar.gz
           tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz
           tar -xf gplrelease/linux-3.0.35.tar.gz
+          echo "Contents after extraction:"
+          ls -la
 
       - name: Configure kernel
         run: |
-          ls -la
-          ls gplrelease/
           KERNEL_DIR=$(find . -maxdepth 2 -name "Makefile" -path "*/linux*/Makefile" | head -1 | xargs dirname)
           echo "Kernel dir: $KERNEL_DIR"
           cd $KERNEL_DIR

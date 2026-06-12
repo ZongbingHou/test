@@ -1,0 +1,49 @@
+name: Build uhid.ko for Kindle Oasis 1
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget tar gcc make bc libssl-dev
+
+      - name: Download Linaro 4.9.4 toolchain
+        run: |
+          wget -q https://releases.linaro.org/components/toolchain/binaries/4.9-2017.01/arm-linux-gnueabihf/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf.tar.xz
+          tar -xf gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf.tar.xz
+          echo "$PWD/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf/bin" >> $GITHUB_PATH
+
+      - name: Download kernel source
+        run: |
+          wget -q https://kindledownloads.s3.amazonaws.com/Kindle_src_5.16.2.1.1_4097550002.tar.gz
+          tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz
+          tar -xf gplrelease/linux-3.0.35.tar.gz
+
+      - name: Configure kernel
+        run: |
+          cd linux-3.0.35
+          make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx_wario_defconfig
+          scripts/config --module CONFIG_UHID
+          scripts/config --disable CONFIG_FB_MXC_EINK_V2_PANEL CONFIG_FB_MXC_EINK_PANEL
+
+      - name: Build vmlinux and modules
+        run: |
+          cd linux-3.0.35
+          make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- vmlinux modules -j$(nproc)
+
+      - name: Build uhid.ko
+        run: |
+          cd linux-3.0.35
+          make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- M=drivers/hid modules -j$(nproc)
+          cp drivers/hid/uhid.ko ../uhid-3.0.35-lab126-409755-wario.ko
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: uhid-ko
+          path: uhid-3.0.35-lab126-409755-wario.ko

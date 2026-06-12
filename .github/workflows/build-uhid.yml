@@ -29,8 +29,10 @@ jobs:
         run: |
           cd kernel
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx60_wario_defconfig
-          scripts/config --module CONFIG_UHID
-          scripts/config --disable CONFIG_FB_MXC_EINK_V2_PANEL CONFIG_FB_MXC_EINK_PANEL
+          echo "CONFIG_UHID=m" >> .config
+          sed -i 's/CONFIG_FB_MXC_EINK_V2_PANEL=y/CONFIG_FB_MXC_EINK_V2_PANEL=n/' .config
+          sed -i 's/CONFIG_FB_MXC_EINK_PANEL=y/CONFIG_FB_MXC_EINK_PANEL=n/' .config
+          make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- olddefconfig
 
       - name: Build vmlinux and modules
         run: |

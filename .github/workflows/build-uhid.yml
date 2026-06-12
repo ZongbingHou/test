@@ -33,12 +33,7 @@ jobs:
       - name: Patch compiler header
         run: |
           cd kernel
-          cat > include/linux/compiler-gcc7.h << 'EOF'
-          #ifndef __LINUX_COMPILER_H
-          #error "Please don't include <linux/compiler-gcc7.h> directly, include <linux/compiler.h> instead."
-          #endif
-          #include <linux/compiler-gcc.h>
-          EOF
+          cp include/linux/compiler-gcc6.h include/linux/compiler-gcc7.h
 
       - name: Build vmlinux and modules
         run: |

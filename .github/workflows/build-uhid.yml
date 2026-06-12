@@ -20,11 +20,10 @@ jobs:
           mkdir kernel
           cd kernel
           wget -q https://kindledownloads.s3.amazonaws.com/Kindle_src_5.16.2.1.1_4097550002.tar.gz
-          tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz
-          echo "=== top level ==="
-          ls -la
-          echo "=== gplrelease ==="
-          ls gplrelease/ 2>/dev/null || echo "no gplrelease"
+          tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz gplrelease/linux-3.0.35.tar.gz
+          tar -xf gplrelease/linux-3.0.35.tar.gz
+          echo "=== wario configs ==="
+          ls arch/arm/configs/ | grep -i wario || echo "none found"
 
       - name: Configure kernel
         run: |

@@ -6,32 +6,33 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /home/runner/work/kindle-uhid-build/kindle-uhid-build
     steps:
       - name: Install dependencies and cross compiler
         run: |
           sudo apt-get update
           sudo apt-get install -y wget tar bc libssl-dev gcc-arm-linux-gnueabihf make
 
-      - name: Download kernel source
+      - name: Download and extract kernel source
         run: |
+          mkdir kernel && cd kernel
           wget -q https://kindledownloads.s3.amazonaws.com/Kindle_src_5.16.2.1.1_4097550002.tar.gz
           tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz
 
       - name: Configure kernel
         run: |
+          cd kernel
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx_wario_defconfig
           scripts/config --module CONFIG_UHID
           scripts/config --disable CONFIG_FB_MXC_EINK_V2_PANEL CONFIG_FB_MXC_EINK_PANEL
 
       - name: Build vmlinux and modules
         run: |
+          cd kernel
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- vmlinux modules -j$(nproc)
 
       - name: Build uhid.ko
         run: |
+          cd kernel
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- M=drivers/hid modules -j$(nproc)
           cp drivers/hid/uhid.ko uhid-3.0.35-lab126-409755-wario.ko
 
@@ -39,4 +40,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: uhid-ko
-          path: /home/runner/work/kindle-uhid-build/kindle-uhid-build/uhid-3.0.35-lab126-409755-wario.ko
+          path: kernel/uhid-3.0.35-lab126-409755-wario.ko

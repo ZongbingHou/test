@@ -6,15 +6,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: ubuntu:18.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Install dependencies and cross compiler
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget tar bc libssl-dev make gcc-7-arm-linux-gnueabihf
-          sudo ln -sf /usr/bin/arm-linux-gnueabihf-gcc-7 /usr/local/bin/arm-linux-gnueabihf-gcc
+          apt-get update
+          apt-get install -y wget tar bc libssl-dev make gcc-arm-linux-gnueabihf
 
       - name: Download and extract kernel source
         run: |
@@ -23,8 +20,6 @@ jobs:
           wget -q https://kindledownloads.s3.amazonaws.com/Kindle_src_5.16.2.1.1_4097550002.tar.gz
           tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz gplrelease/linux-3.0.35.tar.gz
           tar -xf gplrelease/linux-3.0.35.tar.gz
-          echo "=== wario configs ==="
-          ls arch/arm/configs/ | grep -i wario || echo "none found"
 
       - name: Configure kernel
         run: |
@@ -44,10 +39,10 @@ jobs:
         run: |
           cd kernel
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- M=drivers/hid modules -j$(nproc)
-          cp drivers/hid/uhid.ko uhid-3.0.35-lab126-409755-wario.ko
+          cp drivers/hid/uhid.ko ../uhid-3.0.35-lab126-409755-wario.ko
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: uhid-ko
-          path: kernel/uhid-3.0.35-lab126-409755-wario.ko
+          path: uhid-3.0.35-lab126-409755-wario.ko

@@ -16,8 +16,12 @@ jobs:
         run: |
           wget -q https://kindledownloads.s3.amazonaws.com/Kindle_src_5.16.2.1.1_4097550002.tar.gz
           tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz
+          echo "=== root ==="
+          ls -la
+          echo "=== gplrelease ==="
+          ls gplrelease/
           tar -xf gplrelease/linux-3.0.35.tar.gz
-          echo "Contents after extraction:"
+          echo "=== after extract ==="
           ls -la
 
       - name: Configure kernel

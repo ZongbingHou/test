@@ -11,7 +11,7 @@ jobs:
       - name: Install dependencies and cross compiler
         run: |
           apt-get update
-          apt-get install -y wget tar bc libssl-dev make gcc-arm-linux-gnueabihf
+          apt-get install -y wget tar bc libssl-dev make gcc gcc-arm-linux-gnueabihf
 
       - name: Download and extract kernel source
         run: |

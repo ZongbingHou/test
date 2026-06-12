@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: /home/runner/work/kindle-uhid-build/kindle-uhid-build
     steps:
       - name: Install dependencies and cross compiler
         run: |
@@ -16,38 +19,24 @@ jobs:
         run: |
           wget -q https://kindledownloads.s3.amazonaws.com/Kindle_src_5.16.2.1.1_4097550002.tar.gz
           tar -xf Kindle_src_5.16.2.1.1_4097550002.tar.gz
-          echo "=== root ==="
-          ls -la
-          echo "=== gplrelease ==="
-          ls gplrelease/
-          tar -xf gplrelease/linux-3.0.35.tar.gz
-          echo "=== after extract ==="
-          ls -la
 
       - name: Configure kernel
         run: |
-          KERNEL_DIR=$(find . -maxdepth 2 -name "Makefile" -path "*/linux*/Makefile" | head -1 | xargs dirname)
-          echo "Kernel dir: $KERNEL_DIR"
-          cd $KERNEL_DIR
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx_wario_defconfig
           scripts/config --module CONFIG_UHID
           scripts/config --disable CONFIG_FB_MXC_EINK_V2_PANEL CONFIG_FB_MXC_EINK_PANEL
 
       - name: Build vmlinux and modules
         run: |
-          KERNEL_DIR=$(find . -maxdepth 2 -name "Makefile" -path "*/linux*/Makefile" | head -1 | xargs dirname)
-          cd $KERNEL_DIR
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- vmlinux modules -j$(nproc)
 
       - name: Build uhid.ko
         run: |
-          KERNEL_DIR=$(find . -maxdepth 2 -name "Makefile" -path "*/linux*/Makefile" | head -1 | xargs dirname)
-          cd $KERNEL_DIR
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- M=drivers/hid modules -j$(nproc)
-          cp drivers/hid/uhid.ko ../uhid-3.0.35-lab126-409755-wario.ko
+          cp drivers/hid/uhid.ko uhid-3.0.35-lab126-409755-wario.ko
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: uhid-ko
-          path: uhid-3.0.35-lab126-409755-wario.ko
+          path: /home/runner/work/kindle-uhid-build/kindle-uhid-build/uhid-3.0.35-lab126-409755-wario.ko

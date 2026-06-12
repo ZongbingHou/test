@@ -45,6 +45,11 @@ jobs:
           cd kernel
           make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- vmlinux modules -j$(nproc)
 
+      - name: Check config
+        run: |
+          cd kernel
+          grep UHID .config
+
       - name: Build uhid.ko
         run: |
           cd kernel
